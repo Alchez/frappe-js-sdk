@@ -1,4 +1,5 @@
-import { AxiosInstance } from 'axios';
+import { AxiosInstance, type RawAxiosRequestHeaders } from 'axios';
+
 import { FrappeAuth } from '..';
 import { FrappeCall } from '../call';
 import { FrappeDB } from '../db';
@@ -13,9 +14,6 @@ export class FrappeApp {
   /** Name of the Frappe App instance */
   readonly name: string;
 
-  /** Axios instance */
-  readonly axios: AxiosInstance;
-
   /** Whether to use token based auth */
   readonly useToken: boolean;
 
@@ -26,35 +24,35 @@ export class FrappeApp {
   readonly tokenType?: 'Bearer' | 'token';
 
   /** Custom Headers to be passed in each request */
-  readonly customHeaders?: object
+  readonly customHeaders?: RawAxiosRequestHeaders;
 
-  constructor(url: string, tokenParams?: TokenParams, name?: string, customHeaders?: object) {
+  /** Axios instance */
+  readonly axios: AxiosInstance;
+
+  /** A FrappeAuth class instance for the app */
+  auth: FrappeAuth;
+
+  /** A FrappeDB class instance for the app */
+  db: FrappeDB;
+
+  /** A FrappeFileUpload class instance for the app */
+  file: FrappeFileUpload;
+
+  /** A FrappeCall class instance for the app */
+  call: FrappeCall;
+
+  constructor(url: string, tokenParams?: TokenParams, name?: string, customHeaders?: RawAxiosRequestHeaders) {
     this.url = url;
     this.name = name ?? 'FrappeApp';
     this.useToken = tokenParams?.useToken ?? false;
     this.token = tokenParams?.token;
     this.tokenType = tokenParams?.type ?? 'Bearer';
-    this.customHeaders = customHeaders
-    this.axios = getAxiosClient(this.url, this.useToken, this.token, this.tokenType, this.customHeaders);
-  }
+    this.customHeaders = customHeaders;
+    this.axios = getAxiosClient(this.url, this.useToken, this.tokenType, this.token, this.customHeaders);
 
-  /** Returns a FrappeAuth object for the app */
-  auth() {
-    return new FrappeAuth(this.url, this.axios, this.useToken, this.token, this.tokenType);
-  }
-
-  /** Returns a FrappeDB object for the app */
-  db() {
-    return new FrappeDB(this.url, this.axios, this.useToken, this.token, this.tokenType);
-  }
-
-  /** Returns a FrappeFileUpload object for the app */
-  file() {
-    return new FrappeFileUpload(this.url, this.axios, this.useToken, this.token, this.tokenType, this.customHeaders);
-  }
-
-  /** Returns a FrappeCall object for the app */
-  call() {
-    return new FrappeCall(this.url, this.axios, this.useToken, this.token, this.tokenType);
+    this.auth = new FrappeAuth(url, tokenParams, name, customHeaders);
+    this.db = new FrappeDB(url, tokenParams, name, customHeaders);
+    this.file = new FrappeFileUpload(url, tokenParams, name, customHeaders);
+    this.call = new FrappeCall(url, tokenParams, name, customHeaders);
   }
 }

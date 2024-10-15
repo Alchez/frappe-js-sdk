@@ -3,23 +3,23 @@ import axios, { AxiosInstance, RawAxiosRequestHeaders } from 'axios';
 export function getAxiosClient(
   appURL: string,
   useToken?: boolean,
-  token?: () => string,
   tokenType?: 'Bearer' | 'token',
-  customHeaders?: object
+  token?: () => string,
+  customHeaders?: RawAxiosRequestHeaders,
 ): AxiosInstance {
   return axios.create({
     baseURL: appURL,
-    headers: getRequestHeaders(useToken, tokenType, token, appURL, customHeaders),
+    headers: getRequestHeaders(appURL, useToken, tokenType, token, customHeaders),
     withCredentials: true,
   });
 }
 
 export function getRequestHeaders(
+  appURL?: string,
   useToken: boolean = false,
   tokenType?: 'Bearer' | 'token',
   token?: () => string,
-  appURL?: string,
-  customHeaders?: object
+  customHeaders?: RawAxiosRequestHeaders,
 ): RawAxiosRequestHeaders {
   const headers: RawAxiosRequestHeaders = {
     Accept: 'application/json',
@@ -46,6 +46,6 @@ export function getRequestHeaders(
 
   return {
     ...headers,
-    ...(customHeaders ?? {})
+    ...(customHeaders ?? {}),
   };
 }

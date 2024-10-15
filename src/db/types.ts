@@ -5,9 +5,9 @@ type FilterVar<T> = keyof T | (string & Record<never, never>);
 
 type SingleValueFilter<T> = [FilterVar<T>, SingleValueFilterOperator, Value];
 type MultiValueFilter<T> = [FilterVar<T>, MultiValueFilterOperator, Value[]];
-export type Filter<T = FrappeDoc<{}>> = SingleValueFilter<T> | MultiValueFilter<T>;
+export type Filter<T = FrappeDoc> = SingleValueFilter<T> | MultiValueFilter<T>;
 
-export type FrappeDoc<T> = T & {
+export type FrappeDoc<T = {}> = T & {
   /** User who created the document */
   owner: string;
   /** Date and time when the document was created - ISO format */
