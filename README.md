@@ -71,12 +71,18 @@ const frappe = new FrappeApp("https://test.frappe.cloud", {
 
 ## Authentication
 
+#### Initialise the auth library
+
+```js
+const auth = frappe.auth()
+```
+
 #### Login a user:
 
 This makes an API call to the `/api/method/login` endpoint.
 
 ```js
-frappe.auth
+auth
   .loginWithUsernamePassword({ username: 'admin', password: 'my-password' })
   .then((response) => console.log('Logged in'))
   .catch((error) => console.error(error));
@@ -87,7 +93,7 @@ frappe.auth
 This makes an API call to the `/api/method/frappe.auth.get_logged_user` endpoint.
 
 ```js
-frappe.auth
+auth
   .getLoggedInUser()
   .then((user) => console.log(`User ${user} is logged in.`))
   .catch((error) => console.error(error));
@@ -98,7 +104,7 @@ frappe.auth
 This makes an API call to the `/api/method/logout` endpoint.
 
 ```js
-frappe.auth
+auth
   .logout()
   .then(() => console.log('Logged out.'))
   .catch((error) => console.error(error));
@@ -109,7 +115,7 @@ frappe.auth
 This makes an API sends a password reset link to the specified email address.
 
 ```js
-frappe.auth
+auth
   .forgetPassword('example@example.com')
   .then(() => console.log('Password Reset Email Sent!'))
   .catch(() => console.error("We couldn't find your account."));
@@ -117,10 +123,16 @@ frappe.auth
 
 ## Database
 
+#### Initialise the database library
+
+```js
+const db = frappe.db();
+```
+
 #### Fetch document using document name
 
 ```js
-frappe.db.getDoc('DocType', 'My DocType Name')
+db.getDoc('DocType', 'My DocType Name')
   .then((doc) => console.log(doc))
   .catch((error) => console.error(error));
 ```
@@ -128,7 +140,7 @@ frappe.db.getDoc('DocType', 'My DocType Name')
 #### Fetch list of documents
 
 ```js
-frappe.db.getDocList('DocType')
+db.getDocList('DocType')
   .then((docs) => console.log(docs))
   .catch((error) => console.error(error));
 ```
@@ -136,7 +148,7 @@ frappe.db.getDocList('DocType')
 Optionally, a second argument can be provided to filter, sort, limit and paginate results.
 
 ```js
-frappe.db.getDocList('DocType', {
+db.getDocList('DocType', {
   /** Fields to be fetched */
   fields: ['name', 'creation'],
   /** Filters to be applied - SQL AND operation */
@@ -170,7 +182,7 @@ const filters = [['creation', '>', '2021-10-09']];
 const useCache = true; /** Default is false - Optional **/
 const debug = false; /** Default is false - Optional **/
 
-frappe.db.getCount('DocType', filters, cache, debug)
+db.getCount('DocType', filters, cache, debug)
   .then((count) => console.log(count))
   .catch((error) => console.error(error));
 ```
@@ -180,7 +192,7 @@ frappe.db.getCount('DocType', filters, cache, debug)
 To create a new document, pass the name of the DocType and the fields to `createDoc`.
 
 ```js
-frappe.db.createDoc('My Custom DocType', {
+db.createDoc('My Custom DocType', {
   name: 'Test',
   test_field: 'This is a test field',
 })
@@ -193,7 +205,7 @@ frappe.db.createDoc('My Custom DocType', {
 To update an existing document, pass the name of the DocType, name of the document and the fields to be updated to `updateDoc`.
 
 ```js
-frappe.db.updateDoc('My Custom DocType', 'Test', {
+db.updateDoc('My Custom DocType', 'Test', {
   test_field: 'This is an updated test field.',
 })
   .then((doc) => console.log(doc))
@@ -205,7 +217,7 @@ frappe.db.updateDoc('My Custom DocType', 'Test', {
 To create a new document, pass the name of the DocType and the name of the document to be deleted to `deleteDoc`.
 
 ```js
-frappe.db.deleteDoc('My Custom DocType', 'Test')
+db.deleteDoc('My Custom DocType', 'Test')
   .then((response) => console.log(response.message)) // Message will be "ok"
   .catch((error) => console.error(error));
 ```
@@ -219,7 +231,7 @@ For example, to enforce type on the `updateDoc` method:
 interface TestDoc {
   test_field: string;
 }
-frappe.db.updateDoc<TestDoc>('My Custom DocType', 'Test', {
+db.updateDoc<TestDoc>('My Custom DocType', 'Test', {
   test_field: 'This is an updated test field.',
 });
 ```
@@ -251,6 +263,12 @@ All document responses are returned as an intersection of `FrappeDoc` and the sp
 
 ## API Calls
 
+#### Initialise the call library
+
+```ts
+const call = frappe.call();
+```
+
 Make sure all endpoints are whitelisted (`@frappe.whitelist()`) in your backend
 
 #### GET request
@@ -262,7 +280,7 @@ const searchParams = {
   doctype: 'Currency',
   txt: 'IN',
 };
-frappe.call
+call
   .get('frappe.desk.search_link', searchParams)
   .then((result) => console.log(result))
   .catch((error) => console.error(error));
@@ -279,7 +297,7 @@ const updatedFields = {
   fieldname: 'interest',
   value: 'Frappe Framework, ERPNext',
 };
-frappe.call
+call
   .post('frappe.client.set_value', updatedFields)
   .then((result) => console.log(result))
   .catch((error) => console.error(error));
@@ -296,7 +314,7 @@ const updatedFields = {
   fieldname: 'interest',
   value: 'Frappe Framework, ERPNext',
 };
-frappe.call
+call
   .put('frappe.client.set_value', updatedFields)
   .then((result) => console.log(result))
   .catch((error) => console.error(error));
@@ -311,13 +329,19 @@ const documentToBeDeleted = {
   doctype: 'Tag',
   name: 'Random Tag',
 };
-frappe.call
+call
   .put('frappe.client.delete', documentToBeDeleted)
   .then((result) => console.log(result))
   .catch((error) => console.error(error));
 ```
 
 ## File Uploads
+
+#### Initialise the file library
+
+```ts
+const file = frappe.file();
+```
 
 #### Upload a file with on progress callback
 
@@ -339,7 +363,7 @@ const fileArgs = {
   "fieldname": "image"
 }
 
-frappe.file.uploadFile(
+file.uploadFile(
             myFile,
             fileArgs,
             /** Progress Indicator callback function **/

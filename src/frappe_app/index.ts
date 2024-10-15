@@ -30,16 +30,16 @@ export class FrappeApp {
   readonly axios: AxiosInstance;
 
   /** A FrappeAuth class instance for the app */
-  auth: FrappeAuth;
+  auth: () => FrappeAuth;
 
   /** A FrappeDB class instance for the app */
-  db: FrappeDB;
+  db: () => FrappeDB;
 
   /** A FrappeFileUpload class instance for the app */
-  file: FrappeFileUpload;
+  file: () => FrappeFileUpload;
 
   /** A FrappeCall class instance for the app */
-  call: FrappeCall;
+  call: () => FrappeCall;
 
   constructor(url: string, tokenParams?: TokenParams, name?: string, customHeaders?: RawAxiosRequestHeaders) {
     this.url = url;
@@ -50,9 +50,9 @@ export class FrappeApp {
     this.customHeaders = customHeaders;
     this.axios = getAxiosClient(this.url, this.useToken, this.tokenType, this.token, this.customHeaders);
 
-    this.auth = new FrappeAuth(url, tokenParams, name, customHeaders);
-    this.db = new FrappeDB(url, tokenParams, name, customHeaders);
-    this.file = new FrappeFileUpload(url, tokenParams, name, customHeaders);
-    this.call = new FrappeCall(url, tokenParams, name, customHeaders);
+    this.auth = () => new FrappeAuth(url, tokenParams, name, customHeaders);
+    this.db = () => new FrappeDB(url, tokenParams, name, customHeaders);
+    this.file = () => new FrappeFileUpload(url, tokenParams, name, customHeaders);
+    this.call = () => new FrappeCall(url, tokenParams, name, customHeaders);
   }
 }
