@@ -3,7 +3,7 @@ import { handleError } from '../utils/error';
 
 export class FrappeCall extends FrappeApp {
   /** Makes a GET request to the specified endpoint */
-  async get<T = any>(path: string, params?: Record<string, any>): Promise<T> {
+  async get<T = any>(path: string, params?: Record<string, unknown>): Promise<T> {
     const encodedParams = new URLSearchParams();
     // TEMP Fix Issue #50
     if (params) {
@@ -11,6 +11,7 @@ export class FrappeCall extends FrappeApp {
         const [key, value] = param;
         if (value !== null && value !== undefined) {
           const val = typeof value === 'object' ? JSON.stringify(value) : value;
+          // @ts-expect-error @typescript-eslint/no-unsafe-assignment
           encodedParams.set(key, val);
         }
       });
@@ -19,7 +20,7 @@ export class FrappeCall extends FrappeApp {
     try {
       const { data } = await this.axios.get<T>(`/api/method/${path}`, { params: encodedParams });
       return data;
-    } catch (error: any) {
+    } catch (error) {
       handleError(error);
     }
   }
@@ -29,7 +30,7 @@ export class FrappeCall extends FrappeApp {
     try {
       const { data } = await this.axios.post<T>(`/api/method/${path}`, { ...params });
       return data;
-    } catch (error: any) {
+    } catch (error) {
       handleError(error);
     }
   }
@@ -39,7 +40,7 @@ export class FrappeCall extends FrappeApp {
     try {
       const { data } = await this.axios.put<T>(`/api/method/${path}`, { ...params });
       return data;
-    } catch (error: any) {
+    } catch (error) {
       handleError(error);
     }
   }
@@ -47,9 +48,10 @@ export class FrappeCall extends FrappeApp {
   /** Makes a DELETE request to the specified endpoint */
   async delete<T = any>(path: string, params?: any): Promise<T> {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const { data } = await this.axios.delete<T>(`/api/method/${path}`, { params });
       return data;
-    } catch (error: any) {
+    } catch (error) {
       handleError(error);
     }
   }

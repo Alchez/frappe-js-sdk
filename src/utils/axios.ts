@@ -1,5 +1,11 @@
 import axios, { AxiosInstance, RawAxiosRequestHeaders } from 'axios';
 
+declare global {
+  interface Window {
+    csrf_token?: string;
+  }
+}
+
 export function getAxiosClient(
   appURL: string,
   useToken?: boolean,
@@ -16,7 +22,7 @@ export function getAxiosClient(
 
 export function getRequestHeaders(
   appURL?: string,
-  useToken: boolean = false,
+  useToken = false,
   tokenType?: 'Bearer' | 'token',
   token?: () => string,
   customHeaders?: RawAxiosRequestHeaders,

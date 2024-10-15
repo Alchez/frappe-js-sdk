@@ -22,7 +22,7 @@ export class FrappeAuth extends FrappeApp {
   /** Gets the currently logged in user */
   async getLoggedInUser(): Promise<string> {
     try {
-      const { data } = await this.axios.get('/api/method/frappe.auth.get_logged_user');
+      const { data } = await this.axios.get<{ message: string }>('/api/method/frappe.auth.get_logged_user');
       return data.message;
     } catch (error) {
       handleError(error, 'There was an error while fetching the logged in user');

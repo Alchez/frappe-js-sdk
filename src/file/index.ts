@@ -18,7 +18,7 @@ export class FrappeFileUpload extends FrappeApp {
     file: File,
     args: FileArgs<T>,
     onProgress?: (bytesUploaded: number, totalBytes?: number, progress?: AxiosProgressEvent) => void,
-    apiPath: string = 'upload_file',
+    apiPath = 'upload_file',
   ) {
     const formData = new FormData();
     if (file) formData.append('file', file, file.name);
@@ -44,13 +44,13 @@ export class FrappeFileUpload extends FrappeApp {
 
     if (otherData) {
       Object.keys(otherData).forEach((key: string) => {
-        const v = otherData[key as keyof T] as any;
+        const v = otherData[key as keyof T] as string;
         formData.append(key, v);
       });
     }
 
     try {
-      const { data } = await this.axios.post(`/api/method/${apiPath}`, formData, {
+      const { data } = await this.axios.post<{ data: unknown }>(`/api/method/${apiPath}`, formData, {
         headers: {
           ...getRequestHeaders(this.url, this.useToken, this.tokenType, this.token, this.customHeaders),
           'Content-Type': 'multipart/form-data',
@@ -62,7 +62,7 @@ export class FrappeFileUpload extends FrappeApp {
         },
       });
       return data.data;
-    } catch (error: any) {
+    } catch (error) {
       handleError(error, 'There was an error while uploading the file.');
     }
   }

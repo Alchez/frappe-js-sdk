@@ -1,13 +1,3 @@
-export interface Error {
-  httpStatus: number;
-  httpStatusText: string;
-  message: string;
-  exception: string;
-  exc?: string;
-  exc_type?: string;
-  _server_messages?: string;
-}
-
 export interface TokenParams {
   /** Whether to use token for API calls */
   useToken: boolean;
@@ -15,4 +5,15 @@ export interface TokenParams {
   token?: () => string;
   /** Type of token to be used for authentication */
   type: 'Bearer' | 'token';
+}
+
+export interface ServerError {
+  exception: string;
+  message: string;
+
+  _server_messages?: string;
+  exc_type?: string;
+  exc?: string;
+  httpStatus?: number;
+  httpStatusText?: string;
 }
